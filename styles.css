@@ -1,0 +1,270 @@
+/* ============================================================
+   HEADS — shared styles
+   Minimal IBM Carbon dark mode (Gray 100 theme tokens).
+   ============================================================ */
+
+:root {
+  /* Carbon Gray 100 (dark) tokens */
+  --background: #161616;
+  --layer-01: #262626;
+  --layer-02: #393939;
+  --border-subtle: #393939;
+  --border-strong: #6f6f6f;
+  --text-primary: #f4f4f4;
+  --text-secondary: #c6c6c6;
+  --text-helper: #8d8d8d;
+
+  --button-primary: #0f62fe;
+  --button-primary-hover: #0353e9;
+  --button-primary-active: #002d9c;
+  --button-secondary: #6f6f6f;
+  --button-secondary-hover: #5e5e5e;
+  --button-secondary-active: #4c4c4c;
+  --button-disabled: #525252;
+
+  --focus: #ffffff;
+
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Courier New', monospace;
+
+  --spacing-05: 1rem;
+  --spacing-07: 2rem;
+  --spacing-09: 3rem;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.4;
+}
+
+/* ---- Typography ---- */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-helper);
+  margin: 0 0 var(--spacing-05);
+}
+
+h1.title {
+  font-weight: 300;
+  font-size: clamp(2.5rem, 10vw, 4.5rem);
+  letter-spacing: 0.02em;
+  margin: 0 0 var(--spacing-05);
+  line-height: 1;
+}
+
+.lede {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  max-width: 36ch;
+  margin: 0 0 var(--spacing-09);
+}
+
+/* ---- Carbon-style buttons (rectangular, no radius) ---- */
+.btn {
+  appearance: none;
+  border: 0;
+  border-radius: 0;
+  min-height: 48px;
+  padding: 0 var(--spacing-07) 0 var(--spacing-05);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  background: var(--button-primary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: background 70ms ease-out;
+  text-decoration: none;
+}
+.btn:hover { background: var(--button-primary-hover); }
+.btn:active { background: var(--button-primary-active); }
+.btn:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -4px;
+}
+.btn--secondary { background: var(--button-secondary); }
+.btn--secondary:hover { background: var(--button-secondary-hover); }
+.btn--secondary:active { background: var(--button-secondary-active); }
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  background: var(--button-disabled);
+  color: #8d8d8d;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   Splash page
+   ============================================================ */
+.splash {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--spacing-09) var(--spacing-05);
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   Game page
+   ============================================================ */
+.game {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-07) var(--spacing-05) var(--spacing-09);
+}
+
+.game__header {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-07);
+}
+.game__header a {
+  color: var(--text-helper);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-decoration: none;
+  letter-spacing: 0.08em;
+}
+.game__header a:hover { color: var(--text-primary); }
+
+/* The stacked reel machine */
+.machine {
+  width: 100%;
+  max-width: 480px;
+  background: #000;
+  border: 1px solid var(--border-subtle);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reel {
+  position: relative;
+  width: 100%;
+  /* Each slice is ~576 x ~240 (aspect 2.4:1). Fixed ratio absorbs the
+     tiny per-file viewBox height variance. */
+  aspect-ratio: 576 / 240;
+  overflow: hidden;
+  background: #010101;
+}
+
+.reel__img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+/* Spin cue: subtle vertical blur/shift while cycling */
+.reel.is-spinning .reel__img {
+  filter: blur(1px);
+  animation: reel-jitter 0.12s linear infinite;
+}
+@keyframes reel-jitter {
+  0%   { transform: translateY(-2%); }
+  100% { transform: translateY(2%); }
+}
+
+/* Winning frame highlight */
+.machine.is-win {
+  border-color: var(--button-primary);
+  box-shadow: 0 0 0 1px var(--button-primary);
+}
+
+/* Controls */
+.controls {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  gap: 1px;
+  margin-top: var(--spacing-07);
+}
+.controls .btn { flex: 1; justify-content: center; padding: 0; }
+
+/* ============================================================
+   Modal (win placeholder)
+   ============================================================ */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-05);
+  z-index: 100;
+}
+.modal.is-open { display: flex; }
+.modal__box {
+  background: var(--layer-01);
+  border: 1px solid var(--border-subtle);
+  max-width: 400px;
+  width: 100%;
+  padding: var(--spacing-07);
+}
+.modal__box h2 {
+  font-weight: 300;
+  font-size: 2rem;
+  margin: 0 0 var(--spacing-05);
+}
+.modal__box p {
+  color: var(--text-secondary);
+  margin: 0 0 var(--spacing-07);
+}
+
+/* ============================================================
+   Dev panel (hidden unless ?dev=1)
+   ============================================================ */
+.dev {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  background: var(--layer-01);
+  border: 1px solid var(--border-strong);
+  padding: 12px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  z-index: 200;
+  display: none;
+}
+.dev.is-visible { display: block; }
+.dev h3 {
+  margin: 0 0 8px;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--button-primary);
+}
+.dev label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  color: var(--text-secondary);
+  cursor: pointer;
+}

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Heads — Play</title>
+  <meta name="description" content="Spin the Heads slot machine." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="game">
+    <div class="game__header">
+      <p class="eyebrow" style="margin:0">HEADS</p>
+      <a href="index.html">← home</a>
+    </div>
+
+    <!-- The slot machine: three stacked reels (top / middle / bottom) -->
+    <div class="machine" id="machine">
+      <div class="reel" data-pos="t">
+        <img class="reel__img" id="reel-t" alt="top slice" />
+      </div>
+      <div class="reel" data-pos="m">
+        <img class="reel__img" id="reel-m" alt="middle slice" />
+      </div>
+      <div class="reel" data-pos="b">
+        <img class="reel__img" id="reel-b" alt="bottom slice" />
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="play">PLAY</button>
+      <button class="btn btn--secondary" id="reset">RESET</button>
+    </div>
+  </main>
+
+  <!-- Win modal (placeholder until the winning animation asset exists) -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal__box">
+      <h2 id="modal-title">You win!</h2>
+      <p>All three thirds matched. (Winning animation coming soon.)</p>
+      <button class="btn" id="modal-close">PLAY AGAIN</button>
+    </div>
+  </div>
+
+  <!-- Dev panel: hidden unless ?dev=1 or the key combo (see app.js) -->
+  <aside class="dev" id="dev">
+    <h3>Dev</h3>
+    <label><input type="checkbox" id="dev-force" /> Force next win</label>
+    <label><input type="checkbox" id="dev-boost" /> Boost odds (~15%)</label>
+  </aside>
+
+  <script src="app.js"></script>
+</body>
+</html>
