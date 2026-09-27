@@ -155,12 +155,9 @@ h1.title {
 .machine {
   width: 100%;
   max-width: 480px;
-  background: #000;
-  border: 1px solid var(--border-subtle);
-  padding: 8px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 1px;
 }
 
 .reel {
@@ -180,9 +177,8 @@ h1.title {
   object-fit: cover;
 }
 
-/* Spin cue: subtle vertical blur/shift while cycling */
+/* Spin cue: subtle vertical bounce while cycling (no blur) */
 .reel.is-spinning .reel__img {
-  filter: blur(1px);
   animation: reel-jitter 0.12s linear infinite;
 }
 @keyframes reel-jitter {
