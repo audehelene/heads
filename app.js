@@ -13,6 +13,7 @@
   var HEAD_COUNT = 44;              // H01 .. H44
   var POSITIONS = ['t', 'm', 'b'];  // top, middle, bottom
   var PARTS_DIR = 'assets/svg/parts/';
+  var COVER_SRC = 'assets/svg/cover/000_FRONT.svg';
 
   // Build the list of head ids: H01, H02, ... H44
   var HEADS = [];
@@ -48,6 +49,9 @@
   // ---- Preload all 132 slices so src swaps are instant -----
   var preloaded = [];
   function preload() {
+    var cover = new Image();
+    cover.src = COVER_SRC;
+    preloaded.push(cover);
     for (var p = 0; p < POSITIONS.length; p++) {
       for (var h = 0; h < HEADS.length; h++) {
         var img = new Image();
@@ -69,6 +73,8 @@
   }
 
   function setInitial() {
+    // Landing state: show the cover art over the (reset) reels.
+    machine.classList.add('is-cover');
     for (var p = 0; p < POSITIONS.length; p++) {
       landed[POSITIONS[p]] = 0; // H01
       showSlice(POSITIONS[p], 0);
@@ -117,6 +123,7 @@
     if (spinning) return;
     spinning = true;
     machine.classList.remove('is-win');
+    machine.classList.remove('is-cover'); // reveal the reels
     playBtn.disabled = true;
 
     var outcome = decideOutcome();

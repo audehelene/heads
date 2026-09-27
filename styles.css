@@ -160,6 +160,14 @@ h1.title {
   gap: 1px;
 }
 
+/* Cover art = landing state (shown until PLAY; hidden while reels show) */
+.cover {
+  width: 100%;
+  display: none;
+}
+.machine.is-cover .cover { display: block; }
+.machine.is-cover .reel { display: none; }
+
 .reel {
   position: relative;
   width: 100%;

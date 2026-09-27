@@ -17,8 +17,10 @@
       <a href="index.html">← home</a>
     </div>
 
-    <!-- The slot machine: three stacked reels (top / middle / bottom) -->
-    <div class="machine" id="machine">
+    <!-- The slot machine: cover art is the landing state; PLAY reveals the
+         three stacked reels (top / middle / bottom). -->
+    <div class="machine is-cover" id="machine">
+      <img class="cover" id="cover" src="assets/svg/cover/000_FRONT.svg" alt="Heads cover" />
       <div class="reel" data-pos="t">
         <img class="reel__img" id="reel-t" alt="top slice" />
       </div>
