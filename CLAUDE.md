@@ -38,6 +38,11 @@ A small static site hosted on GitHub Pages:
   in `assets/svg/ui/`: the scene as-is, plus **cropped** standalone buttons
   (`play-default/hover/disabled.svg`, `reset-*`) made by rewriting only the
   root `viewBox`/`width`/`height` to each button's bbox.
+- Background scene variants `Slot_Display_001.svg … 009.svg` (~3MB each,
+  same frame position as `start2`) are cycled behind the frame while the
+  reels spin. They're referenced **directly from `assets/_backgrounds/`**
+  (not copied to `ui/`) to avoid duplicating ~29 MB; they're preloaded
+  ~1.2s after load so the landing paints first.
 - All asset references are **relative** (the site is served under
   `/heads/`, so absolute `/assets/...` paths would 404).
 
@@ -74,3 +79,7 @@ A small static site hosted on GitHub Pages:
   <576px layout: frame + heads full-width (scene background cropped to the
   gold frame), buttons stacked below. `app.js` drives both buttons' disabled
   state via `stage.is-spinning`. Splash left unchanged.
+- 2026-10-11 — While the reels spin, the background scene cycles randomly
+  through `Slot_Display_001..009` (behind the frame + buttons) and settles
+  on the last one when the reels land; RESET returns it to `start2`. Splash
+  copy updated with the exquisite-corpse credit and a FEED link.

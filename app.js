@@ -15,6 +15,14 @@
   var PARTS_DIR = 'assets/svg/parts/';
   var COVER_SRC = 'assets/svg/cover/000_FRONT.svg';
 
+  // Background scenes: start2 is the landing scene; 001..009 are cycled
+  // (behind the frame + buttons) while the reels spin.
+  var SCENE_START = 'assets/svg/ui/Slot_Display_start2.svg';
+  var SCENES = [];
+  for (var s = 1; s <= 9; s++) {
+    SCENES.push('assets/_backgrounds/Slot_Display_' + String(s).padStart(3, '0') + '.svg');
+  }
+
   // Build the list of head ids: H01, H02, ... H44
   var HEADS = [];
   for (var i = 1; i <= HEAD_COUNT; i++) {
@@ -42,6 +50,7 @@
     m: reels.m.closest('.reel'),
     b: reels.b.closest('.reel'),
   };
+  var scene = document.querySelector('.stage__scene');
   var playBtn = document.getElementById('play');
   var resetBtn = document.getElementById('reset');
   var modal = document.getElementById('modal');
@@ -60,11 +69,21 @@
         preloaded.push(img);
       }
     }
+    // Scenes are large (~3MB each); preload them a beat later so the
+    // landing paints first. They only need to be ready by the first PLAY.
+    setTimeout(function () {
+      for (var n = 0; n < SCENES.length; n++) {
+        var sc = new Image();
+        sc.src = SCENES[n];
+        preloaded.push(sc);
+      }
+    }, 1200);
   }
 
   // ---- State -----------------------------------------------
   var spinning = false;
   var intervals = { t: null, m: null, b: null };
+  var sceneInterval = null;
   var timeouts = [];
   var landed = { t: 0, m: 0, b: 0 }; // index into HEADS per reel
 
@@ -101,15 +120,27 @@
   }
 
   // ---- Spin ------------------------------------------------
-  var CYCLE_MS = 70;      // how fast slices flicker while spinning
-  var BASE_STOP = 800;    // first reel stop delay
-  var STAGGER = 450;      // extra delay per subsequent reel
+  var CYCLE_MS = 70;        // how fast slices flicker while spinning
+  var SCENE_CYCLE_MS = 130; // how fast the background scene cycles
+  var BASE_STOP = 800;      // first reel stop delay
+  var STAGGER = 450;        // extra delay per subsequent reel
 
   function startReelCycle(pos) {
     reelWraps[pos].classList.add('is-spinning');
     intervals[pos] = setInterval(function () {
       showSlice(pos, randIndex());
     }, CYCLE_MS);
+  }
+
+  // Cycle the background scene (behind the frame + buttons) while spinning.
+  function startSceneCycle() {
+    if (!scene) return;
+    sceneInterval = setInterval(function () {
+      scene.src = SCENES[Math.floor(Math.random() * SCENES.length)];
+    }, SCENE_CYCLE_MS);
+  }
+  function stopSceneCycle() {
+    if (sceneInterval) { clearInterval(sceneInterval); sceneInterval = null; }
   }
 
   function stopReel(pos, finalIndex) {
@@ -129,6 +160,8 @@
 
     var outcome = decideOutcome();
 
+    startSceneCycle(); // cycle the background behind the frame
+
     POSITIONS.forEach(function (pos) {
       startReelCycle(pos);
     });
@@ -139,6 +172,7 @@
         stopReel(pos, outcome[pos]);
         if (idx === POSITIONS.length - 1) {
           spinning = false;
+          stopSceneCycle(); // background lands on its last scene
           stage.classList.remove('is-spinning');
           evaluate();
         }
@@ -162,6 +196,8 @@
       if (intervals[pos]) { clearInterval(intervals[pos]); intervals[pos] = null; }
       reelWraps[pos].classList.remove('is-spinning');
     });
+    stopSceneCycle();
+    if (scene) scene.src = SCENE_START; // back to the landing scene
     timeouts.forEach(clearTimeout);
     timeouts = [];
     spinning = false;
