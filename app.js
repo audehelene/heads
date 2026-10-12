@@ -121,7 +121,7 @@
 
   // ---- Spin ------------------------------------------------
   var CYCLE_MS = 70;        // how fast slices flicker while spinning
-  var SCENE_CYCLE_MS = 130; // how fast the background scene cycles
+  var SCENE_CYCLE_MS = 260; // how fast the background scene cycles
   var BASE_STOP = 800;      // first reel stop delay
   var STAGGER = 450;        // extra delay per subsequent reel
 
