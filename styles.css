@@ -217,11 +217,11 @@ h1.title {
   width: calc(1366 / 350 * 100%); /* full scene at the same scale as center */
   background: var(--scene-url) center / 100% 100% no-repeat;
 }
-/* Wings tuck 20px under the main background (hidden by .scene-fill on top)
-   so there's no seam: left wing shifted +20px (right), right wing -20px. */
-.scene-wing--left { right: calc(100% - 20px); }
+/* Wings butt directly against the main background. A 1px overlap tucked
+   under .scene-fill (which paints on top) guarantees no sub-pixel seam. */
+.scene-wing--left { right: calc(100% - 1px); }
 .scene-wing--left::before { right: 0; transform: scaleX(-1); }
-.scene-wing--right { left: calc(100% - 20px); }
+.scene-wing--right { left: calc(100% - 1px); }
 .scene-wing--right::before { left: 0; transform: scaleX(-1); }
 
 /* Title + home in the thin strip above the frame */

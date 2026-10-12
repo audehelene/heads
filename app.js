@@ -204,8 +204,8 @@
       // default dark frame (settle() must have run first).
       pulseToDefault: function (times) {
         clearPulse();
-        var FADE = 450;  // crossfade duration per flash
-        var STEP = 450;  // time between flash toggles
+        var FADE = 480;  // crossfade duration per flash
+        var STEP = 480;  // time between flash toggles
         setFade(b, FADE);
         setUrl(b, SCENE_START);
         b.style.opacity = '0';
@@ -268,7 +268,7 @@
         if (idx === POSITIONS.length - 1) {
           spinning = false;
           stopSceneCycle(); // background lands on its last scene
-          Scenes.pulseToDefault(2); // flash to default & back, land on default
+          Scenes.pulseToDefault(4); // flash to default & back, land on default
           stage.classList.remove('is-spinning');
           evaluate();
         }
