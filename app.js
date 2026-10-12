@@ -240,9 +240,9 @@
   });
 
   // ---- Idle auto-reset of the background -------------------
-  // After 3s of no interaction, revert ONLY the background scene to the
+  // After 1.2s of no interaction, revert ONLY the background scene to the
   // default (start) — the landed head slots stay put.
-  var IDLE_MS = 3000;
+  var IDLE_MS = 1200;
   var idleTimer = null;
   function revertBackgroundIfIdle() {
     if (spinning) { armIdle(); return; } // never while spinning
