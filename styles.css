@@ -69,9 +69,15 @@ h1.title {
 .lede {
   color: var(--text-secondary);
   font-size: 1rem;
-  max-width: 36ch;
+  max-width: 44ch;
   margin: 0 0 var(--spacing-09);
 }
+.lede a {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.lede a:hover { color: var(--button-primary); }
 
 /* ---- Carbon-style buttons (rectangular, no radius) ---- */
 .btn {
