@@ -121,8 +121,8 @@
 
   // ---- Spin ------------------------------------------------
   var CYCLE_MS = 70;         // how fast slices flicker while spinning
-  var SCENE_CYCLE_MIN = 40;  // background scene cycle: random 40-80ms
-  var SCENE_CYCLE_MAX = 80;
+  var SCENE_CYCLE_MIN = 40;  // background scene cycle: random 40-180ms
+  var SCENE_CYCLE_MAX = 180;
   var BASE_STOP = 800;       // first reel stop delay
   var STAGGER = 450;         // extra delay per subsequent reel
 
@@ -134,7 +134,7 @@
   }
 
   // Cycle the background scene (behind the frame + buttons) while spinning,
-  // with a random 40-80ms gap between swaps for a jittery flicker.
+  // with a random 40-180ms gap between swaps for a jittery flicker.
   function startSceneCycle() {
     if (!scene) return;
     (function tick() {
