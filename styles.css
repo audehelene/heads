@@ -182,6 +182,44 @@ h1.title {
   user-select: none;
 }
 
+/* Background scene layers (for crossfade) + mirrored side wings.
+   Each .scene-layer carries a --scene-url that its fill + wings read, so one
+   assignment updates all three. Wings mirror the scene's edges outward so
+   there's no black gap on the sides (up to ~2066px wide at the 1366 design). */
+.scene-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+}
+.scene-fill,
+.scene-wing {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+.scene-fill {
+  left: 0;
+  right: 0;
+  background: var(--scene-url) center / 100% 100% no-repeat;
+}
+.scene-wing {
+  width: calc(350 / 1366 * 100%); /* 350px of mirrored art each side */
+  overflow: hidden;
+}
+.scene-wing::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc(1366 / 350 * 100%); /* full scene at the same scale as center */
+  background: var(--scene-url) center / 100% 100% no-repeat;
+}
+.scene-wing--left { right: 100%; }
+.scene-wing--left::before { right: 0; transform: scaleX(-1); }
+.scene-wing--right { left: 100%; }
+.scene-wing--right::before { left: 0; transform: scaleX(-1); }
+
 /* Title + home in the thin strip above the frame */
 .stage__top {
   position: absolute;
@@ -342,7 +380,8 @@ h1.title {
 
   /* Hide the wide desktop scene; show just the gold frame full-width by
      cropping the same scene SVG as a background on the screen box. */
-  .stage__scene { display: none; }
+  .stage__scene,
+  .scene-layer { display: none; }
   .screen {
     position: relative;
     order: 2;

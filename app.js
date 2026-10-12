@@ -83,7 +83,6 @@
   // ---- State -----------------------------------------------
   var spinning = false;
   var intervals = { t: null, m: null, b: null };
-  var sceneInterval = null;
   var timeouts = [];
   var landed = { t: 0, m: 0, b: 0 }; // index into HEADS per reel
 
@@ -121,8 +120,8 @@
 
   // ---- Spin ------------------------------------------------
   var CYCLE_MS = 70;         // how fast slices flicker while spinning
-  var SCENE_CYCLE_MIN = 40;  // background scene cycle: random 40-180ms
-  var SCENE_CYCLE_MAX = 180;
+  var SCENE_CYCLE_MIN = 160;  // background scene cycle: random 160-260ms
+  var SCENE_CYCLE_MAX = 260;
   var BASE_STOP = 800;       // first reel stop delay
   var STAGGER = 450;         // extra delay per subsequent reel
 
@@ -133,19 +132,111 @@
     }, CYCLE_MS);
   }
 
-  // Cycle the background scene (behind the frame + buttons) while spinning,
-  // with a random 40-180ms gap between swaps for a jittery flicker.
-  function startSceneCycle() {
-    if (!scene) return;
-    (function tick() {
-      scene.src = SCENES[Math.floor(Math.random() * SCENES.length)];
-      var delay = SCENE_CYCLE_MIN + Math.random() * (SCENE_CYCLE_MAX - SCENE_CYCLE_MIN);
-      sceneInterval = setTimeout(tick, delay);
-    })();
-  }
-  function stopSceneCycle() {
-    if (sceneInterval) { clearTimeout(sceneInterval); sceneInterval = null; }
-  }
+  // Cycle the background scene (behind the frame + buttons) while spinning.
+  // EXPERIMENT: crossfade between scenes, and extend the artwork outward with
+  // horizontally-mirrored "wings" so there's no black gap on the sides (up to
+  // ~2066px wide). Each layer drives center + both wings from one CSS custom
+  // property (--scene-url), so one assignment updates all three.
+  var SCENE_FADE_MS = 180;
+  var Scenes = (function () {
+    var host = scene; // the original <img class="stage__scene"> placeholder
+    if (!host) {
+      var noop = function () {};
+      return { startCycle: noop, stopCycle: noop, pulseToDefault: noop,
+        setDefaultNow: noop, isDefault: function () { return true; } };
+    }
+    var parent = host.parentNode;
+    function makeLayer() {
+      var layer = document.createElement('div');
+      layer.className = 'scene-layer';
+      layer.innerHTML =
+        '<div class="scene-fill"></div>' +
+        '<div class="scene-wing scene-wing--left"></div>' +
+        '<div class="scene-wing scene-wing--right"></div>';
+      parent.insertBefore(layer, host);
+      return layer;
+    }
+    var a = makeLayer();
+    var b = makeLayer();
+    host.style.display = 'none'; // retire the original single <img>
+
+    function url(src) { return 'url("' + src + '")'; }
+    function setUrl(layer, src) { layer.style.setProperty('--scene-url', url(src)); }
+    function setFade(layer, ms) { layer.style.transition = 'opacity ' + ms + 'ms linear'; }
+
+    setFade(a, SCENE_FADE_MS); setFade(b, SCENE_FADE_MS);
+    a.style.opacity = '1'; b.style.opacity = '0';
+    setUrl(a, SCENE_START); setUrl(b, SCENE_START);
+    var frontIsA = true;
+    var cycleId = null;
+    var pulseId = null;
+    function clearPulse() { if (pulseId) { clearTimeout(pulseId); pulseId = null; } }
+
+    function settle() {
+      var vis = frontIsA ? a : b;
+      a.style.setProperty('--scene-url', vis.style.getPropertyValue('--scene-url'));
+      a.style.opacity = '1'; b.style.opacity = '0'; frontIsA = true;
+    }
+    return {
+      startCycle: function () {
+        clearPulse();
+        (function tick() {
+          var back = frontIsA ? b : a;
+          var front = frontIsA ? a : b;
+          setFade(back, SCENE_FADE_MS); setFade(front, SCENE_FADE_MS);
+          setUrl(back, SCENES[Math.floor(Math.random() * SCENES.length)]);
+          back.style.opacity = '1'; front.style.opacity = '0';
+          frontIsA = !frontIsA;
+          var delay = SCENE_CYCLE_MIN + Math.random() * (SCENE_CYCLE_MAX - SCENE_CYCLE_MIN);
+          cycleId = setTimeout(tick, delay);
+        })();
+      },
+      stopCycle: function () {
+        if (cycleId) { clearTimeout(cycleId); cycleId = null; }
+        settle();
+      },
+      isDefault: function () {
+        return (frontIsA ? a : b).style.getPropertyValue('--scene-url')
+          .indexOf('Slot_Display_start2.svg') !== -1;
+      },
+      // When the reels stop: flash to the default dark frame and back to the
+      // landed scene `times` times, then one more flash that LANDS on the
+      // default dark frame (settle() must have run first).
+      pulseToDefault: function (times) {
+        clearPulse();
+        var FADE = 180;  // crossfade duration per flash
+        var STEP = 190;  // time between flash toggles
+        setFade(b, FADE);
+        setUrl(b, SCENE_START);
+        b.style.opacity = '0';
+        void b.offsetWidth; // flush baseline
+        var step = 0;
+        var total = times * 2 + 1; // round trips + final land on default
+        (function next() {
+          if (step >= total) {
+            // Ended showing the default (b). Consolidate onto A = default.
+            setUrl(a, SCENE_START);
+            a.style.opacity = '1';
+            b.style.opacity = '0';
+            frontIsA = true;
+            setFade(b, SCENE_FADE_MS); // restore cycle fade
+            pulseId = null;
+            return;
+          }
+          b.style.opacity = (step % 2 === 0) ? '1' : '0'; // even->default, odd->landed
+          step++;
+          pulseId = setTimeout(next, STEP);
+        })();
+      },
+      setDefaultNow: function () {
+        clearPulse();
+        setUrl(a, SCENE_START);
+        a.style.opacity = '1'; b.style.opacity = '0'; frontIsA = true;
+      }
+    };
+  })();
+  function startSceneCycle() { Scenes.startCycle(); }
+  function stopSceneCycle() { Scenes.stopCycle(); }
 
   function stopReel(pos, finalIndex) {
     clearInterval(intervals[pos]);
@@ -177,9 +268,9 @@
         if (idx === POSITIONS.length - 1) {
           spinning = false;
           stopSceneCycle(); // background lands on its last scene
+          Scenes.pulseToDefault(3); // flash to default & back, land on default
           stage.classList.remove('is-spinning');
           evaluate();
-          armIdle(); // start the 3s idle window on the landed result
         }
       }, BASE_STOP + idx * STAGGER);
       timeouts.push(t);
@@ -202,7 +293,7 @@
       reelWraps[pos].classList.remove('is-spinning');
     });
     stopSceneCycle();
-    if (scene) scene.src = SCENE_START; // back to the landing scene
+    Scenes.setDefaultNow(); // back to the landing scene
     timeouts.forEach(clearTimeout);
     timeouts = [];
     spinning = false;
@@ -239,25 +330,6 @@
     }
   });
 
-  // ---- Idle auto-reset of the background -------------------
-  // After 1.2s of no interaction, revert ONLY the background scene to the
-  // default (start) — the landed head slots stay put.
-  var IDLE_MS = 1200;
-  var idleTimer = null;
-  function revertBackgroundIfIdle() {
-    if (spinning) { armIdle(); return; } // never while spinning
-    if (scene && scene.src.indexOf('Slot_Display_start2.svg') === -1) {
-      scene.src = SCENE_START;
-    }
-  }
-  function armIdle() {
-    if (idleTimer) clearTimeout(idleTimer);
-    idleTimer = setTimeout(revertBackgroundIfIdle, IDLE_MS);
-  }
-  ['mousemove', 'mousedown', 'keydown', 'touchstart', 'wheel'].forEach(function (ev) {
-    window.addEventListener(ev, armIdle, { passive: true });
-  });
-
   // ---- Wire up ---------------------------------------------
   playBtn.addEventListener('click', play);
   resetBtn.addEventListener('click', reset);
@@ -269,5 +341,4 @@
   preload();
   setInitial();
   maybeShowDev();
-  armIdle();
 })();

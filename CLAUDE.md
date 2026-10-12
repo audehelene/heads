@@ -42,7 +42,9 @@ A small static site hosted on GitHub Pages:
   same frame position as `start2`) are cycled behind the frame while the
   reels spin. They're referenced **directly from `assets/_backgrounds/`**
   (not copied to `ui/`) to avoid duplicating ~29 MB; they're preloaded
-  ~1.2s after load so the landing paints first.
+  ~1.2s after load so the landing paints first. They're shown as CSS
+  `background` via `--scene-url` (not `<img>`), so the center + mirrored
+  wings update from one assignment.
 - All asset references are **relative** (the site is served under
   `/heads/`, so absolute `/assets/...` paths would 404).
 
@@ -50,9 +52,15 @@ A small static site hosted on GitHub Pages:
 
 - Win condition: `landed.t === landed.m === landed.b` (same head index).
 - Unlimited plays (no counter/limit).
-- After the spin, the background stays on its landed scene; after **1.2s of
-  no interaction** it reverts to the default (`start2`) — but the head slots
-  stay put. Only the **RESET** button resets the slots (and everything).
+- Background behaviour (desktop; all in the `Scenes` module in `app.js`):
+  while spinning, scenes **crossfade** (two `.scene-layer`s driven by a
+  `--scene-url` custom property) with a random 160–260ms gap and ~180ms fade.
+  On stop it settles on the landed scene, then **flashes to the default dark
+  frame and back 3× and finally lands on the default** (180ms fade / 190ms
+  step). The head slots keep their result — only **RESET** resets them.
+- Each scene layer has horizontally **mirrored side wings** (`.scene-wing`,
+  350px each at the 1366 design) so there's no black gap on the sides up to
+  ~2066px wide; hidden on mobile. There is no idle auto-revert.
 - **Dev controls** are hidden; reveal with `?dev=1` or press `d` 3×:
   - *Force next win* (one-shot), *Boost odds* (~15%).
 - The win currently shows a placeholder modal ("You win!"). When the
@@ -86,3 +94,7 @@ A small static site hosted on GitHub Pages:
   through `Slot_Display_001..009` (behind the frame + buttons) and settles
   on the last one when the reels land; RESET returns it to `start2`. Splash
   copy updated with the exquisite-corpse credit and a FEED link.
+- 2026-10-11 — Background reworked into the `Scenes` module: crossfade
+  cycling (160–260ms gap, 180ms fade) via two `--scene-url` layers; mirrored
+  side wings fill the sides to ~2066px; on stop it flashes to the default and
+  back 3× then lands on the default dark frame; idle auto-revert removed.
