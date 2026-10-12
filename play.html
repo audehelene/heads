@@ -12,29 +12,41 @@
 </head>
 <body>
   <main class="game">
-    <div class="game__header">
-      <p class="eyebrow" style="margin:0">HEADS</p>
-      <a href="index.html">← home</a>
-    </div>
+    <!-- Scalable arcade stage (1366x900). Everything positions as % of it. -->
+    <div class="stage" id="stage">
+      <!-- Background scene: gold frame + black screen + scenery (desktop) -->
+      <img class="stage__scene" src="assets/svg/ui/Slot_Display_start2.svg" alt="" aria-hidden="true" />
 
-    <!-- The slot machine: cover art is the landing state; PLAY reveals the
-         three stacked reels (top / middle / bottom). -->
-    <div class="machine is-cover" id="machine">
-      <img class="cover" id="cover" src="assets/svg/cover/000_FRONT.svg" alt="Heads cover" />
-      <div class="reel" data-pos="t">
-        <img class="reel__img" id="reel-t" alt="top slice" />
-      </div>
-      <div class="reel" data-pos="m">
-        <img class="reel__img" id="reel-m" alt="middle slice" />
-      </div>
-      <div class="reel" data-pos="b">
-        <img class="reel__img" id="reel-b" alt="bottom slice" />
-      </div>
-    </div>
+      <!-- Title + home in the thin strip above the frame -->
+      <header class="stage__top">
+        <span class="stage__title">HEADS</span>
+        <a class="stage__home" href="index.html">← home</a>
+      </header>
 
-    <div class="controls">
-      <button class="btn" id="play">PLAY</button>
-      <button class="btn btn--secondary" id="reset">RESET</button>
+      <!-- Screen window (black frame on desktop; full-width frame crop on
+           mobile). Holds the slot machine. Cover art is the landing state;
+           PLAY reveals the three reels. -->
+      <div class="screen" id="screen">
+        <div class="machine is-cover" id="machine">
+          <img class="cover" id="cover" src="assets/svg/cover/000_FRONT.svg" alt="Heads cover" />
+          <div class="reel" data-pos="t">
+            <img class="reel__img" id="reel-t" alt="top slice" />
+          </div>
+          <div class="reel" data-pos="m">
+            <img class="reel__img" id="reel-m" alt="middle slice" />
+          </div>
+          <div class="reel" data-pos="b">
+            <img class="reel__img" id="reel-b" alt="bottom slice" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Custom SVG buttons: Reset (left), Play (right).
+           Default art via CSS; :hover and .is-spinning swap the state art. -->
+      <div class="stage__controls">
+        <button class="gbtn gbtn--reset" id="reset" aria-label="Reset"></button>
+        <button class="gbtn gbtn--play" id="play" aria-label="Play"></button>
+      </div>
     </div>
   </main>
 

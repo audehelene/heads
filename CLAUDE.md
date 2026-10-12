@@ -32,6 +32,12 @@ A small static site hosted on GitHub Pages:
   Not shown on the page yet; reserved for the future win animation.
 - Pristine originals live in `assets/_originals/` — never edit these;
   they are the source of truth if we need to re-optimize.
+- Cover art: `assets/svg/cover/000_FRONT.svg` (landing state on the game).
+- Arcade UI art: pristine source in `assets/_backgrounds/` (scene +
+  Play/Reset button states, all on a shared 1366×900 canvas). Served copies
+  in `assets/svg/ui/`: the scene as-is, plus **cropped** standalone buttons
+  (`play-default/hover/disabled.svg`, `reset-*`) made by rewriting only the
+  root `viewBox`/`width`/`height` to each button's bbox.
 - All asset references are **relative** (the site is served under
   `/heads/`, so absolute `/assets/...` paths would 404).
 
@@ -60,3 +66,11 @@ A small static site hosted on GitHub Pages:
 - 2026-09-27 — Initial build: splash + slot-machine game, Carbon dark,
   SVGO-optimized parts, authentic odds + hidden dev overrides, Pages via
   main/root.
+- 2026-10-11 — Game page reskinned as an arcade "stage": the slot heads
+  sit inside the gold-frame black screen of `Slot_Display_start2.svg`,
+  custom Play (right) / Reset (left) SVG buttons with default/hover/disabled
+  states, HEADS title + home in the strip above the frame. The whole page
+  scales off the 1366×900 background width (`.stage` with cqw text). Added a
+  <576px layout: frame + heads full-width (scene background cropped to the
+  gold frame), buttons stacked below. `app.js` drives both buttons' disabled
+  state via `stage.is-spinning`. Splash left unchanged.

@@ -30,6 +30,7 @@
   }
 
   // ---- DOM -------------------------------------------------
+  var stage = document.getElementById('stage');
   var machine = document.getElementById('machine');
   var reels = {
     t: document.getElementById('reel-t'),
@@ -124,7 +125,7 @@
     spinning = true;
     machine.classList.remove('is-win');
     machine.classList.remove('is-cover'); // reveal the reels
-    playBtn.disabled = true;
+    stage.classList.add('is-spinning');   // both buttons -> disabled art
 
     var outcome = decideOutcome();
 
@@ -138,7 +139,7 @@
         stopReel(pos, outcome[pos]);
         if (idx === POSITIONS.length - 1) {
           spinning = false;
-          playBtn.disabled = false;
+          stage.classList.remove('is-spinning');
           evaluate();
         }
       }, BASE_STOP + idx * STAGGER);
@@ -164,7 +165,7 @@
     timeouts.forEach(clearTimeout);
     timeouts = [];
     spinning = false;
-    playBtn.disabled = false;
+    stage.classList.remove('is-spinning');
     machine.classList.remove('is-win');
     closeModal();
     setInitial();

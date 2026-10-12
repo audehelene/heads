@@ -123,38 +123,101 @@ h1.title {
 }
 
 /* ============================================================
-   Game page
+   Game page — arcade stage
    ============================================================ */
+:root {
+  /* Stage canvas (shared by all background/button assets) */
+  --stage-w: 1366;
+  --stage-h: 900;
+
+  /* Black screen window where the heads sit (in 1366x900 space) */
+  --screen-left: 27.45%;   /* 375/1366 */
+  --screen-top: 6.56%;     /* 59/900  */
+  --screen-w: 45.10%;      /* 616/1366 */
+  --screen-h: 85.11%;      /* 766/900 */
+
+  /* Play button (right) bbox */
+  --play-left: 74.89%;     /* 1023/1366 */
+  --play-top: 77.22%;      /* 695/900 */
+  --play-w: 9.66%;         /* 132/1366 */
+  --play-h: 18.89%;        /* 170/900 */
+
+  /* Reset button (left) bbox */
+  --reset-left: 13.03%;    /* 178/1366 */
+  --reset-top: 77.22%;     /* 695/900 */
+  --reset-w: 10.69%;       /* 146/1366 */
+  --reset-h: 19.11%;       /* 172/900 */
+}
+
 .game {
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: var(--spacing-07) var(--spacing-05) var(--spacing-09);
+  justify-content: center;
+  padding: 0;
 }
 
-.game__header {
+/* Scales off width; capped by viewport height so it never overflows. */
+.stage {
+  position: relative;
+  width: min(100%, calc(100dvh * 1366 / 900));
+  aspect-ratio: 1366 / 900;
+  margin: 0 auto;
+  container-type: inline-size;
+}
+
+.stage__scene {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  max-width: 480px;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Title + home in the thin strip above the frame */
+.stage__top {
+  position: absolute;
+  top: 0;
+  left: 2.5%;
+  right: 2.5%;
+  height: 6.1%;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--spacing-07);
+  z-index: 3;
 }
-.game__header a {
-  color: var(--text-helper);
+.stage__title {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
-  text-decoration: none;
-  letter-spacing: 0.08em;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  font-size: 2.2cqw;
+  color: var(--text-primary);
 }
-.game__header a:hover { color: var(--text-primary); }
+.stage__home {
+  font-family: var(--font-mono);
+  font-size: 1.7cqw;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  color: var(--text-secondary);
+}
+.stage__home:hover { color: var(--text-primary); }
 
-/* The stacked reel machine */
+/* Black screen window (desktop: positioned inside the scene) */
+.screen {
+  position: absolute;
+  left: var(--screen-left);
+  top: var(--screen-top);
+  width: var(--screen-w);
+  height: var(--screen-h);
+  z-index: 2;
+}
+
+/* The stacked reel machine fills the screen window */
 .machine {
-  width: 100%;
-  max-width: 480px;
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -163,6 +226,8 @@ h1.title {
 /* Cover art = landing state (shown until PLAY; hidden while reels show) */
 .cover {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: none;
 }
 .machine.is-cover .cover { display: block; }
@@ -171,9 +236,7 @@ h1.title {
 .reel {
   position: relative;
   width: 100%;
-  /* Each slice is ~576 x ~240 (aspect 2.4:1). Fixed ratio absorbs the
-     tiny per-file viewBox height variance. */
-  aspect-ratio: 576 / 240;
+  flex: 1;              /* three reels evenly fill the screen height */
   overflow: hidden;
   background: #010101;
 }
@@ -194,21 +257,137 @@ h1.title {
   100% { transform: translateY(2%); }
 }
 
-/* Winning frame highlight */
+/* Winning highlight */
 .machine.is-win {
-  border-color: var(--button-primary);
-  box-shadow: 0 0 0 1px var(--button-primary);
+  box-shadow: 0 0 0 2px var(--button-primary);
 }
 
-/* Controls */
-.controls {
-  width: 100%;
-  max-width: 480px;
-  display: flex;
-  gap: 1px;
-  margin-top: var(--spacing-07);
+/* ---- Custom SVG buttons ---- */
+/* Desktop: a full-stage overlay; the buttons position themselves at their
+   bbox and are the only interactive parts. */
+.stage__controls {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
 }
-.controls .btn { flex: 1; justify-content: center; padding: 0; }
+.gbtn {
+  position: absolute;
+  pointer-events: auto;
+  border: 0;
+  padding: 0;
+  background: transparent center / contain no-repeat;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.gbtn--play {
+  left: var(--play-left);
+  top: var(--play-top);
+  width: var(--play-w);
+  height: var(--play-h);
+  background-image: url('assets/svg/ui/play-default.svg');
+}
+.gbtn--reset {
+  left: var(--reset-left);
+  top: var(--reset-top);
+  width: var(--reset-w);
+  height: var(--reset-h);
+  background-image: url('assets/svg/ui/reset-default.svg');
+}
+.gbtn--play:hover  { background-image: url('assets/svg/ui/play-hover.svg'); }
+.gbtn--reset:hover { background-image: url('assets/svg/ui/reset-hover.svg'); }
+
+/* While the heads spin, both buttons show their disabled art and stop
+   responding to input. */
+.stage.is-spinning .gbtn--play {
+  background-image: url('assets/svg/ui/play-disabled.svg');
+}
+.stage.is-spinning .gbtn--reset {
+  background-image: url('assets/svg/ui/reset-disabled.svg');
+}
+.stage.is-spinning .gbtn { pointer-events: none; cursor: default; }
+.gbtn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* ============================================================
+   Responsive — below 576px: frame full width, buttons below
+   ============================================================ */
+@media (max-width: 575.98px) {
+  .game { align-items: flex-start; }
+
+  /* Stage becomes a vertical stack: title, frame, buttons. */
+  .stage {
+    width: 100%;
+    aspect-ratio: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 12px;
+    container-type: normal;
+  }
+
+  /* Title/home above the frame, in normal flow */
+  .stage__top {
+    position: static;
+    height: auto;
+    order: 1;
+  }
+  .stage__title { font-size: 1.1rem; }
+  .stage__home { font-size: 0.85rem; }
+
+  /* Hide the wide desktop scene; show just the gold frame full-width by
+     cropping the same scene SVG as a background on the screen box. */
+  .stage__scene { display: none; }
+  .screen {
+    position: relative;
+    order: 2;
+    left: auto;
+    top: auto;
+    width: 100%;
+    height: auto;
+    /* gold-frame outer bbox 651x801 -> aspect of the crop box */
+    aspect-ratio: 651 / 801;
+    background: url('assets/svg/ui/Slot_Display_start2.svg') no-repeat;
+    /* zoom the 1366x900 scene so the 651x801 frame region fills this box:
+       scaleX = 1366/651 = 209.8%, scaleY = 900/801 = 112.4% */
+    background-size: 209.8% 112.4%;
+    /* shift so frame origin (357,41) maps to 0,0:
+       posX% = 357/(1366-651) = 49.9% ; posY% = 41/(900-801) = 41.4% */
+    background-position: 49.9% 41.4%;
+  }
+
+  /* Heads inset inside the frame crop (black screen within the gold frame) */
+  .machine {
+    inset: auto;        /* clear desktop inset:0 first (shorthand) */
+    left: 2.8%;
+    top: 2.3%;
+    width: 94.6%;
+    height: 95.6%;
+  }
+
+  /* Buttons reflow into a row below the frame */
+  .stage__controls {
+    position: static;
+    order: 3;
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    pointer-events: auto;
+  }
+  /* Target the modifier selectors so desktop width/left/top don't leak. */
+  .gbtn,
+  .gbtn--play,
+  .gbtn--reset {
+    position: static;
+    left: auto;
+    top: auto;
+    width: auto;
+    min-width: 0;
+    height: 72px;
+    flex: 1 1 0;
+    background-size: contain;
+  }
+}
 
 /* ============================================================
    Modal (win placeholder)
