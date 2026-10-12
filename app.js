@@ -204,8 +204,8 @@
       // default dark frame (settle() must have run first).
       pulseToDefault: function (times) {
         clearPulse();
-        var FADE = 400;  // crossfade duration per flash
-        var STEP = 400;  // time between flash toggles
+        var FADE = 4500; // crossfade duration per flash
+        var STEP = 450;  // time between flash toggles
         setFade(b, FADE);
         setUrl(b, SCENE_START);
         b.style.opacity = '0';
