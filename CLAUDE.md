@@ -50,6 +50,9 @@ A small static site hosted on GitHub Pages:
 
 - Win condition: `landed.t === landed.m === landed.b` (same head index).
 - Unlimited plays (no counter/limit).
+- After the spin, the background stays on its landed scene; after **3s of
+  no interaction** it reverts to the default (`start2`) — but the head slots
+  stay put. Only the **RESET** button resets the slots (and everything).
 - **Dev controls** are hidden; reveal with `?dev=1` or press `d` 3×:
   - *Force next win* (one-shot), *Boost odds* (~15%).
 - The win currently shows a placeholder modal ("You win!"). When the

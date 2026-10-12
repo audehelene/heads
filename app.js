@@ -175,6 +175,7 @@
           stopSceneCycle(); // background lands on its last scene
           stage.classList.remove('is-spinning');
           evaluate();
+          armIdle(); // start the 3s idle window on the landed result
         }
       }, BASE_STOP + idx * STAGGER);
       timeouts.push(t);
@@ -234,6 +235,25 @@
     }
   });
 
+  // ---- Idle auto-reset of the background -------------------
+  // After 3s of no interaction, revert ONLY the background scene to the
+  // default (start) — the landed head slots stay put.
+  var IDLE_MS = 3000;
+  var idleTimer = null;
+  function revertBackgroundIfIdle() {
+    if (spinning) { armIdle(); return; } // never while spinning
+    if (scene && scene.src.indexOf('Slot_Display_start2.svg') === -1) {
+      scene.src = SCENE_START;
+    }
+  }
+  function armIdle() {
+    if (idleTimer) clearTimeout(idleTimer);
+    idleTimer = setTimeout(revertBackgroundIfIdle, IDLE_MS);
+  }
+  ['mousemove', 'mousedown', 'keydown', 'touchstart', 'wheel'].forEach(function (ev) {
+    window.addEventListener(ev, armIdle, { passive: true });
+  });
+
   // ---- Wire up ---------------------------------------------
   playBtn.addEventListener('click', play);
   resetBtn.addEventListener('click', reset);
@@ -245,4 +265,5 @@
   preload();
   setInitial();
   maybeShowDev();
+  armIdle();
 })();
