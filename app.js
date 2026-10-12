@@ -120,10 +120,11 @@
   }
 
   // ---- Spin ------------------------------------------------
-  var CYCLE_MS = 70;        // how fast slices flicker while spinning
-  var SCENE_CYCLE_MS = 260; // how fast the background scene cycles
-  var BASE_STOP = 800;      // first reel stop delay
-  var STAGGER = 450;        // extra delay per subsequent reel
+  var CYCLE_MS = 70;         // how fast slices flicker while spinning
+  var SCENE_CYCLE_MIN = 40;  // background scene cycle: random 40-80ms
+  var SCENE_CYCLE_MAX = 80;
+  var BASE_STOP = 800;       // first reel stop delay
+  var STAGGER = 450;         // extra delay per subsequent reel
 
   function startReelCycle(pos) {
     reelWraps[pos].classList.add('is-spinning');
@@ -132,15 +133,18 @@
     }, CYCLE_MS);
   }
 
-  // Cycle the background scene (behind the frame + buttons) while spinning.
+  // Cycle the background scene (behind the frame + buttons) while spinning,
+  // with a random 40-80ms gap between swaps for a jittery flicker.
   function startSceneCycle() {
     if (!scene) return;
-    sceneInterval = setInterval(function () {
+    (function tick() {
       scene.src = SCENES[Math.floor(Math.random() * SCENES.length)];
-    }, SCENE_CYCLE_MS);
+      var delay = SCENE_CYCLE_MIN + Math.random() * (SCENE_CYCLE_MAX - SCENE_CYCLE_MIN);
+      sceneInterval = setTimeout(tick, delay);
+    })();
   }
   function stopSceneCycle() {
-    if (sceneInterval) { clearInterval(sceneInterval); sceneInterval = null; }
+    if (sceneInterval) { clearTimeout(sceneInterval); sceneInterval = null; }
   }
 
   function stopReel(pos, finalIndex) {
