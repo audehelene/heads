@@ -191,6 +191,7 @@ h1.title {
   inset: 0;
   pointer-events: none;
   user-select: none;
+  isolation: isolate; /* scope child z-index within each layer */
 }
 .scene-fill,
 .scene-wing {
@@ -201,6 +202,7 @@ h1.title {
 .scene-fill {
   left: 0;
   right: 0;
+  z-index: 1; /* main background sits above the wings (hides the overlap) */
   background: var(--scene-url) center / 100% 100% no-repeat;
 }
 .scene-wing {
@@ -215,9 +217,11 @@ h1.title {
   width: calc(1366 / 350 * 100%); /* full scene at the same scale as center */
   background: var(--scene-url) center / 100% 100% no-repeat;
 }
-.scene-wing--left { right: 100%; }
+/* Wings tuck 20px under the main background (hidden by .scene-fill on top)
+   so there's no seam: left wing shifted +20px (right), right wing -20px. */
+.scene-wing--left { right: calc(100% - 20px); }
 .scene-wing--left::before { right: 0; transform: scaleX(-1); }
-.scene-wing--right { left: 100%; }
+.scene-wing--right { left: calc(100% - 20px); }
 .scene-wing--right::before { left: 0; transform: scaleX(-1); }
 
 /* Title + home in the thin strip above the frame */
