@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Heads — Claim your print</title>
+  <meta name="description" content="Claim your Heads print." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="claim">
+    <p class="eyebrow">Heads · You won a print</p>
+    <h1 class="title" style="font-size:clamp(2rem,8vw,3rem)">Claim your print</h1>
+    <p class="lede">Fill in your details and tap <strong>Send email</strong>. Your
+      email app will open with everything we need — just hit send and we'll be
+      in touch to arrange your print.</p>
+
+    <p class="claim__meta">
+      Code: <strong id="code">—</strong><br />
+      Won at: <strong id="when">—</strong>
+    </p>
+
+    <form id="claim-form" novalidate>
+      <div class="field">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" autocomplete="name" required />
+      </div>
+      <div class="field">
+        <label for="email">Email address</label>
+        <input type="email" id="email" name="email" autocomplete="email" required />
+      </div>
+      <div class="field">
+        <label for="phone">Phone number (optional)</label>
+        <input type="tel" id="phone" name="phone" autocomplete="tel" />
+      </div>
+      <button class="btn" type="submit">SEND EMAIL</button>
+      <p class="claim__note" id="note"></p>
+    </form>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+      var RECIPIENT = 'audejomini@gmail.com';
+
+      var params = new URLSearchParams(window.location.search);
+      var code = params.get('id') || '';
+      var t = params.get('t');
+      var ts = t && !isNaN(Number(t)) ? Number(t) : null;
+      var whenHuman = ts ? new Date(ts).toLocaleString() : '';
+      var whenISO = ts ? new Date(ts).toISOString() : '';
+
+      document.getElementById('code').textContent = code || '—';
+      document.getElementById('when').textContent = whenHuman || '—';
+
+      var form = document.getElementById('claim-form');
+      var note = document.getElementById('note');
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var name = document.getElementById('name').value.trim();
+        var email = document.getElementById('email').value.trim();
+        var phone = document.getElementById('phone').value.trim();
+
+        if (!name || !email) {
+          note.textContent = 'Please enter your name and email.';
+          return;
+        }
+
+        var subject = 'Heads print claim — ' + (code || 'no code');
+        var body =
+          'I won a Heads print!\n\n' +
+          'Code: ' + (code || '(none)') + '\n' +
+          'Won at: ' + (whenHuman || '(unknown)') +
+            (whenISO ? ' (' + whenISO + ')' : '') + '\n\n' +
+          'Name: ' + name + '\n' +
+          'Email: ' + email + '\n' +
+          'Phone: ' + (phone || '(not provided)') + '\n\n' +
+          'Claim link: ' + window.location.href + '\n';
+
+        window.location.href =
+          'mailto:' + RECIPIENT +
+          '?subject=' + encodeURIComponent(subject) +
+          '&body=' + encodeURIComponent(body);
+
+        note.textContent = 'Opening your email app… if nothing happens, email ' +
+          RECIPIENT + ' with your code above.';
+      });
+    })();
+  </script>
+</body>
+</html>

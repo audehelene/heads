@@ -55,6 +55,9 @@
   var resetBtn = document.getElementById('reset');
   var modal = document.getElementById('modal');
   var modalClose = document.getElementById('modal-close');
+  var qrEl = document.getElementById('qr');
+  var winCodeEl = document.getElementById('win-code');
+  var claimLink = document.getElementById('claim-link');
 
   // ---- Preload all 132 slices so src swaps are instant -----
   var preloaded = [];
@@ -286,8 +289,48 @@
     if (win) {
       machine.classList.add('is-win');
       // HOOK: swap this modal for the winning animation asset when ready.
-      openModal();
+      showWin();
     }
+  }
+
+  // ---- Win reward: unique code + QR to the claim form ------
+  function makeCode() {
+    var t = Date.now().toString(36).toUpperCase();
+    var r = Math.random().toString(36).slice(2, 6).toUpperCase();
+    return 'H-' + t + '-' + r;
+  }
+
+  function showWin() {
+    var code = makeCode();
+    var ts = Date.now();
+    // Absolute URL so the QR works when scanned on a phone (live Pages URL).
+    var claimUrl = new URL(
+      'claim.html?id=' + encodeURIComponent(code) + '&t=' + ts,
+      window.location.href
+    ).href;
+
+    if (winCodeEl) winCodeEl.textContent = code;
+    if (claimLink) claimLink.href = claimUrl;
+
+    // Render the QR (qrcodejs from CDN). If it fails, the link + code remain.
+    if (qrEl) {
+      qrEl.innerHTML = '';
+      try {
+        /* global QRCode */
+        new QRCode(qrEl, {
+          text: claimUrl,
+          width: 180,
+          height: 180,
+          colorDark: '#161616',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      } catch (e) {
+        qrEl.textContent = 'QR unavailable — use the link below.';
+      }
+    }
+
+    openModal();
   }
 
   function reset() {

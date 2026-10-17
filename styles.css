@@ -469,6 +469,85 @@ h1.title {
   margin: 0 0 var(--spacing-07);
 }
 
+/* Win modal: stack buttons with a small gap */
+.modal__box--win {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: center;
+}
+.modal__box--win h2,
+.modal__box--win p { margin-bottom: var(--spacing-05); }
+.modal__box--win .btn { justify-content: center; margin-top: 8px; }
+
+/* QR code sits in a white box so it scans in dark mode */
+.qr {
+  align-self: center;
+  background: #fff;
+  padding: 12px;
+  line-height: 0;
+  margin-bottom: var(--spacing-05);
+}
+.qr img,
+.qr canvas { display: block; }
+.qr__meta {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-secondary) !important;
+  margin-bottom: var(--spacing-05) !important;
+}
+
+/* ============================================================
+   Claim form page
+   ============================================================ */
+.claim {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--spacing-09) var(--spacing-05);
+  max-width: 520px;
+  margin: 0 auto;
+}
+.claim__meta {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-helper);
+  margin: 0 0 var(--spacing-07);
+  line-height: 1.6;
+}
+.claim__meta strong { color: var(--text-secondary); font-weight: 500; }
+.field { margin-bottom: var(--spacing-05); text-align: left; }
+.field label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.field input {
+  width: 100%;
+  height: 48px;
+  padding: 0 1rem;
+  border: 0;
+  border-bottom: 1px solid var(--border-strong);
+  background: var(--layer-01);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+}
+.field input:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+.field input::placeholder { color: var(--text-helper); }
+.claim .btn { margin-top: var(--spacing-05); justify-content: center; }
+.claim__note {
+  font-size: 0.75rem;
+  color: var(--text-helper);
+  margin-top: var(--spacing-05);
+}
+
 /* ============================================================
    Dev panel (hidden unless ?dev=1)
    ============================================================ */

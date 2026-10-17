@@ -65,9 +65,16 @@ A small static site hosted on GitHub Pages:
   ~2066px wide; hidden on mobile. There is no idle auto-revert.
 - **Dev controls** are hidden; reveal with `?dev=1` or press `d` 3×:
   - *Force next win* (one-shot), *Boost odds* (~15%).
-- The win currently shows a placeholder modal ("You win!"). When the
-  winning animation asset arrives, swap it in at the `HOOK` comment in
-  `app.js` (`evaluate()`).
+- **Win reward:** on a win, `showWin()` (in `app.js`) mints a unique readable
+  `code` (`H-<base36 time>-<base36 rand>`) + timestamp, builds an absolute
+  `claim.html?id=<code>&t=<epoch>` URL, and renders it as a **QR** (qrcodejs
+  from cdnjs) in the modal: "You won a print! Scan this QR code…". Modal also
+  shows the code and an **Open claim form** tap-link. The `HOOK` comment in
+  `evaluate()` is still where a future win animation would slot in.
+- **Claim form** (`claim.html`): static page; reads `id`+`t` from the query,
+  shows them, collects Name (required) / Email (required) / Phone (optional),
+  and the **Send email** button opens a `mailto:audejomini@gmail.com` prefilled
+  with the code, timestamp, and field values (static site → no backend).
 
 ## Deploy
 
@@ -100,3 +107,7 @@ A small static site hosted on GitHub Pages:
   cycling (160–260ms gap, 180ms fade) via two `--scene-url` layers; mirrored
   side wings fill the sides to ~2066px; on stop it flashes to the default and
   back 3× then lands on the default dark frame; idle auto-revert removed.
+- 2026-10-16 — Win reward added: win modal shows a message + unique QR code
+  (qrcodejs CDN) + code + "Open claim form" tap-link. New `claim.html` form
+  (Name/Email/Phone) emails `audejomini@gmail.com` via `mailto:` with the
+  code + timestamp. Buttons also kept disabled through the whole stop-pulse.

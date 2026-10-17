@@ -50,12 +50,15 @@
     </div>
   </main>
 
-  <!-- Win modal (placeholder until the winning animation asset exists) -->
+  <!-- Win modal: message + unique QR code + claim link -->
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <div class="modal__box">
-      <h2 id="modal-title">You win!</h2>
-      <p>All three thirds matched. (Winning animation coming soon.)</p>
-      <button class="btn" id="modal-close">PLAY AGAIN</button>
+    <div class="modal__box modal__box--win">
+      <h2 id="modal-title">You won a print!</h2>
+      <p>Scan this QR code to email us and get the print.</p>
+      <div class="qr" id="qr"></div>
+      <p class="qr__meta">Your code: <span id="win-code">—</span></p>
+      <a class="btn" id="claim-link" target="_blank" rel="noopener">OPEN CLAIM FORM</a>
+      <button class="btn btn--secondary" id="modal-close">PLAY AGAIN</button>
     </div>
   </div>
 
@@ -66,6 +69,7 @@
     <label><input type="checkbox" id="dev-boost" /> Boost odds (~15%)</label>
   </aside>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
