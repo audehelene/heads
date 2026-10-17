@@ -127,10 +127,10 @@
   var SCENE_CYCLE_MAX = 260;
   var BASE_STOP = 800;       // first reel stop delay
   var STAGGER = 450;         // extra delay per subsequent reel
-  // On a win, wait ~2 background pulses (flash to default & back) before the
-  // win modal appears, so the player sees the full matched head first.
-  // One pulse = 2 × 480ms toggles → 2 pulses ≈ 1920ms.
-  var WIN_MODAL_DELAY = 1920;
+  // On a win, wait ~1 background pulse (flash to default & back) before the
+  // win modal appears, so the player glimpses the full matched head first.
+  // One pulse = 2 × 480ms toggles ≈ 960ms.
+  var WIN_MODAL_DELAY = 960;
 
   function startReelCycle(pos) {
     reelWraps[pos].classList.add('is-spinning');
