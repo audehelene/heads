@@ -70,6 +70,9 @@ A small static site hosted on GitHub Pages:
   full scene height shows so scenery bleeds top/bottom and the cycling/pulse
   is visible); buttons stack below. So the arcade background + pulses now run
   on mobile too.
+- On **touch devices** (`@media (pointer: coarse)`) tapping the QR in the win
+  modal opens the claim form (same destination as the hidden OPEN CLAIM FORM
+  link) and a "Tap the QR…" hint shows; on desktop the QR stays scan-only.
 - Win modal's secondary button is **"View winning head"** — it only closes
   the modal (no reset), so the winning head stays on screen until the player
   chooses PLAY or RESET.

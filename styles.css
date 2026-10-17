@@ -498,6 +498,18 @@ h1.title {
   color: var(--text-secondary) !important;
   margin-bottom: var(--spacing-05) !important;
 }
+/* Tap affordance for the QR — only on touch (coarse-pointer) devices */
+.qr__tap-hint {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-helper) !important;
+  margin: 0 0 var(--spacing-05) !important;
+}
+@media (pointer: coarse) {
+  .qr { cursor: pointer; }
+  .qr__tap-hint { display: block; }
+}
 
 /* ============================================================
    Claim form page

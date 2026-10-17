@@ -337,6 +337,28 @@
       } catch (e) {
         qrEl.textContent = 'QR unavailable — use the link below.';
       }
+
+      // On touch devices (phones/tablets) the player can't scan their own
+      // screen, so tapping the QR opens the claim form (like OPEN CLAIM FORM).
+      // On a mouse (fine pointer) the QR stays scan-only.
+      var coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+      if (coarse) {
+        qrEl.setAttribute('role', 'link');
+        qrEl.setAttribute('tabindex', '0');
+        qrEl.setAttribute('aria-label', 'Open the claim form');
+        qrEl.onclick = function () { window.open(claimUrl, '_blank', 'noopener'); };
+        qrEl.onkeydown = function (ev) {
+          if (ev.key === 'Enter' || ev.key === ' ') {
+            ev.preventDefault();
+            window.open(claimUrl, '_blank', 'noopener');
+          }
+        };
+      } else {
+        qrEl.onclick = null;
+        qrEl.onkeydown = null;
+        qrEl.removeAttribute('role');
+        qrEl.removeAttribute('tabindex');
+      }
     }
 
     openModal();
