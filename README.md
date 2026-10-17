@@ -13,7 +13,7 @@ same head and you win.
 index.html          Splash / landing page (LAUNCH → play)
 play.html           The slot-machine game
 styles.css          Shared minimal IBM Carbon dark styles
-app.js              Slot-machine logic + hidden dev controls
+app.js              Slot-machine + win logic
 assets/svg/full/    44 complete designs H01–H44 (winning result; not shown yet)
 assets/svg/parts/   132 cut thirds: H##_t / H##_m / H##_b (optimized, used by the game)
 assets/_originals/  Pristine, un-optimized copies of full/ + parts/
@@ -28,17 +28,6 @@ No build step. Serve the folder over HTTP (relative asset paths):
 python -m http.server 8000
 # then open http://localhost:8000/
 ```
-
-## Dev controls
-
-Append `?dev=1` to the play URL (or press **d** three times) to reveal a
-panel with:
-
-- **Force next win** — the next spin lands three matching thirds.
-- **Boost odds** — ~15% win rate while enabled.
-
-Default odds are authentic: each reel is independent over 44 heads, so a
-natural match is ~1 in 1,936.
 
 ## Deploy
 

@@ -65,7 +65,9 @@ A small static site hosted on GitHub Pages:
   ~2066px wide; hidden on mobile. There is no idle auto-revert.
 - **Dev controls** are hidden; reveal with `?dev=1` or press `d` 3×:
   - *Force next win* (one-shot), *Boost odds* (~15%).
-- **Win reward:** on a win, `showWin()` (in `app.js`) mints a unique readable
+- **Win reward:** on a win the matched head stays visible for ~2 background
+  pulses (`WIN_MODAL_DELAY`) before the modal appears. Then `showWin()`
+  (in `app.js`) mints a unique readable
   `code` (`H-<base36 time>-<base36 rand>`) + timestamp, builds an absolute
   `claim.html?id=<code>&t=<epoch>` URL, and renders it as a **QR** (qrcodejs
   from cdnjs) in the modal: "You won a print! Scan this QR code…". Modal also
@@ -111,3 +113,7 @@ A small static site hosted on GitHub Pages:
   (qrcodejs CDN) + code + "Open claim form" tap-link. New `claim.html` form
   (Name/Email/Phone) emails `audejomini@gmail.com` via `mailto:` with the
   code + timestamp. Buttons also kept disabled through the whole stop-pulse.
+- 2026-10-16 — Claim "Send email" made reliable (anchor-click mailto + Open in
+  Gmail / clickable mailto / Copy details fallbacks). Win modal delayed ~2
+  pulses (`WIN_MODAL_DELAY`) so the matched head shows first. Dev-controls
+  section removed from the public README to make cheating harder.
