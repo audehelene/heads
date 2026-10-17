@@ -57,8 +57,10 @@
       <p>Scan this QR code to email us and get the print.</p>
       <div class="qr" id="qr"></div>
       <p class="qr__meta">Your code: <span id="win-code">—</span></p>
-      <a class="btn" id="claim-link" target="_blank" rel="noopener">OPEN CLAIM FORM</a>
-      <button class="btn btn--secondary" id="modal-close">VIEW WINNING HEAD</button>
+      <!-- Claim-form link hidden for now (QR-only testing). app.js still sets
+           its href, so re-showing it later is a one-line change. -->
+      <a class="btn" id="claim-link" target="_blank" rel="noopener" style="display:none">OPEN CLAIM FORM</a>
+      <button class="btn btn--secondary" id="modal-close">KEEP GOING</button>
     </div>
   </div>
 
