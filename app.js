@@ -202,7 +202,7 @@
       // When the reels stop: flash to the default dark frame and back to the
       // landed scene `times` times, then one more flash that LANDS on the
       // default dark frame (settle() must have run first).
-      pulseToDefault: function (times) {
+      pulseToDefault: function (times, onDone) {
         clearPulse();
         var FADE = 480;  // crossfade duration per flash
         var STEP = 480;  // time between flash toggles
@@ -221,6 +221,7 @@
             frontIsA = true;
             setFade(b, SCENE_FADE_MS); // restore cycle fade
             pulseId = null;
+            if (onDone) onDone();      // pulsing finished
             return;
           }
           b.style.opacity = (step % 2 === 0) ? '1' : '0'; // even->default, odd->landed
@@ -266,11 +267,14 @@
       var t = setTimeout(function () {
         stopReel(pos, outcome[pos]);
         if (idx === POSITIONS.length - 1) {
-          spinning = false;
           stopSceneCycle(); // background lands on its last scene
-          Scenes.pulseToDefault(3); // flash to default & back, land on default
-          stage.classList.remove('is-spinning');
           evaluate();
+          // Keep both buttons disabled through the whole background pulse;
+          // re-enable only once the pulsing finishes.
+          Scenes.pulseToDefault(3, function () {
+            spinning = false;
+            stage.classList.remove('is-spinning');
+          });
         }
       }, BASE_STOP + idx * STAGGER);
       timeouts.push(t);

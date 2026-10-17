@@ -56,8 +56,10 @@ A small static site hosted on GitHub Pages:
   while spinning, scenes **crossfade** (two `.scene-layer`s driven by a
   `--scene-url` custom property) with a random 160–260ms gap and ~180ms fade.
   On stop it settles on the landed scene, then **flashes to the default dark
-  frame and back 3× and finally lands on the default** (180ms fade / 190ms
-  step). The head slots keep their result — only **RESET** resets them.
+  frame and back 3× and finally lands on the default** (480ms fade / 480ms
+  step). Both buttons stay disabled (`stage.is-spinning`) through the whole
+  pulse and only re-enable when it finishes (via a `pulseToDefault` callback).
+  The head slots keep their result — only **RESET** resets them.
 - Each scene layer has horizontally **mirrored side wings** (`.scene-wing`,
   350px each at the 1366 design) so there's no black gap on the sides up to
   ~2066px wide; hidden on mobile. There is no idle auto-revert.
