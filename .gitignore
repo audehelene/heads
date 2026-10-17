@@ -3,3 +3,8 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 *.tmp
+
+# Keep Claude working docs local-only (they document the hidden dev controls)
+CLAUDE.md
+.claude/
+plans/
