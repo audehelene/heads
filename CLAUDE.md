@@ -62,7 +62,17 @@ A small static site hosted on GitHub Pages:
   The head slots keep their result — only **RESET** resets them.
 - Each scene layer has horizontally **mirrored side wings** (`.scene-wing`,
   350px each at the 1366 design) so there's no black gap on the sides up to
-  ~2066px wide; hidden on mobile. There is no idle auto-revert.
+  ~2066px wide. There is no idle auto-revert.
+- Layout: the scene layers live inside `.screen`, behind the heads. On
+  **desktop** `.screen` fills the stage (full scene + wings) and `.machine`
+  sits at the black-screen `--screen-*` region. On **mobile (<576px)** the
+  wings hide and `.screen` becomes the frame box (gold frame fills the width,
+  full scene height shows so scenery bleeds top/bottom and the cycling/pulse
+  is visible); buttons stack below. So the arcade background + pulses now run
+  on mobile too.
+- Win modal's secondary button is **"View winning head"** — it only closes
+  the modal (no reset), so the winning head stays on screen until the player
+  chooses PLAY or RESET.
 - **Dev controls** are hidden; reveal with `?dev=1` or press `d` 3×:
   - *Force next win* (one-shot), *Boost odds* (~15%).
 - **Win reward:** on a win the matched head stays visible for ~2 background
@@ -117,3 +127,7 @@ A small static site hosted on GitHub Pages:
   Gmail / clickable mailto / Copy details fallbacks). Win modal delayed ~2
   pulses (`WIN_MODAL_DELAY`) so the matched head shows first. Dev-controls
   section removed from the public README to make cheating harder.
+- 2026-10-16 — Win modal's "Play Again" → "View winning head" (closes without
+  resetting). Scene layers moved inside `.screen`; mobile now shows the arcade
+  background + cycling/pulse (frame big, scenery bleeds top/bottom, buttons
+  below) instead of a static frame crop.

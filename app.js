@@ -152,7 +152,10 @@
       return { startCycle: noop, stopCycle: noop, pulseToDefault: noop,
         setDefaultNow: noop, isDefault: function () { return true; } };
     }
-    var parent = host.parentNode;
+    // Layers live inside .screen, behind the heads (.machine), so they render
+    // in the frame area on both desktop (full scene) and mobile (frame crop).
+    var screenEl = document.getElementById('screen');
+    var machineEl = document.getElementById('machine');
     function makeLayer() {
       var layer = document.createElement('div');
       layer.className = 'scene-layer';
@@ -160,7 +163,7 @@
         '<div class="scene-fill"></div>' +
         '<div class="scene-wing scene-wing--left"></div>' +
         '<div class="scene-wing scene-wing--right"></div>';
-      parent.insertBefore(layer, host);
+      screenEl.insertBefore(layer, machineEl);
       return layer;
     }
     var a = makeLayer();
@@ -386,7 +389,9 @@
   // ---- Wire up ---------------------------------------------
   playBtn.addEventListener('click', play);
   resetBtn.addEventListener('click', reset);
-  modalClose.addEventListener('click', reset);
+  // Dismiss the win modal WITHOUT resetting, so the winning head stays on
+  // screen for as long as the player likes (they choose PLAY or RESET next).
+  modalClose.addEventListener('click', closeModal);
   modal.addEventListener('click', function (e) {
     if (e.target === modal) closeModal();
   });

@@ -252,23 +252,25 @@ h1.title {
 }
 .stage__home:hover { color: var(--text-primary); }
 
-/* Black screen window (desktop: positioned inside the scene) */
+/* Display: holds the background scene layers + the heads. On desktop it
+   fills the whole stage (full scene + wings). */
 .screen {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+/* The stacked reel machine sits in the black-screen window of the scene */
+.machine {
   position: absolute;
   left: var(--screen-left);
   top: var(--screen-top);
   width: var(--screen-w);
   height: var(--screen-h);
-  z-index: 2;
-}
-
-/* The stacked reel machine fills the screen window */
-.machine {
-  position: absolute;
-  inset: 0;
   display: flex;
   flex-direction: column;
   gap: 1px;
+  z-index: 1; /* above the scene layers within .screen */
 }
 
 /* Cover art = landing state (shown until PLAY; hidden while reels show) */
@@ -382,35 +384,35 @@ h1.title {
   .stage__title { font-size: 1.1rem; }
   .stage__home { font-size: 0.85rem; }
 
-  /* Hide the wide desktop scene; show just the gold frame full-width by
-     cropping the same scene SVG as a background on the screen box. */
-  .stage__scene,
-  .scene-layer { display: none; }
+  /* The .screen becomes the frame box in the column: the gold frame fills the
+     width, the full scene height shows (so scenery bleeds top/bottom and the
+     cycling/pulse is visible), sides bleed off (clipped). */
+  .stage__scene { display: none; }
   .screen {
     position: relative;
     order: 2;
-    left: auto;
-    top: auto;
+    inset: auto;
     width: 100%;
-    height: auto;
-    /* gold-frame outer bbox 651x801 -> aspect of the crop box */
-    aspect-ratio: 651 / 801;
-    background: url('assets/svg/ui/Slot_Display_start2.svg') no-repeat;
-    /* zoom the 1366x900 scene so the 651x801 frame region fills this box:
-       scaleX = 1366/651 = 209.8%, scaleY = 900/801 = 112.4% */
-    background-size: 209.8% 112.4%;
-    /* shift so frame origin (357,41) maps to 0,0:
-       posX% = 357/(1366-651) = 49.9% ; posY% = 41/(900-801) = 41.4% */
-    background-position: 49.9% 41.4%;
+    /* width → frame (651u), height → full scene (900u) */
+    aspect-ratio: 651 / 900;
+    overflow: hidden;
+    z-index: auto;
+  }
+  /* No side wings on mobile; the scene fill is widened + centered so the
+     frame (centered in the scene) fills the screen width. */
+  .scene-wing { display: none; }
+  .scene-fill {
+    left: 50%;
+    right: auto;
+    width: calc(1366 / 651 * 100%); /* ≈ 209.8% */
+    transform: translateX(-50%);
   }
 
-  /* Heads inset inside the frame crop (black screen within the gold frame) */
+  /* Heads in the black-screen window (top/height reuse the desktop vars; only
+     the horizontal mapping changes because the box is now the frame width). */
   .machine {
-    inset: auto;        /* clear desktop inset:0 first (shorthand) */
-    left: 2.8%;
-    top: 2.3%;
-    width: 94.6%;
-    height: 95.6%;
+    left: 2.69%;   /* (375-357.5)/651 */
+    width: 94.6%;  /* 616/651 */
   }
 
   /* Buttons reflow into a row below the frame */
