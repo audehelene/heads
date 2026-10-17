@@ -541,12 +541,20 @@ h1.title {
   outline-offset: -2px;
 }
 .field input::placeholder { color: var(--text-helper); }
-.claim .btn { margin-top: var(--spacing-05); justify-content: center; }
+.claim .btn { margin-top: var(--spacing-05); justify-content: center; width: 100%; }
 .claim__note {
   font-size: 0.75rem;
   color: var(--text-helper);
   margin-top: var(--spacing-05);
 }
+.claim__fallback {
+  margin-top: var(--spacing-07);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: var(--spacing-05);
+  display: flex;
+  flex-direction: column;
+}
+.claim__fallback .btn { margin-top: 8px; }
 
 /* ============================================================
    Dev panel (hidden unless ?dev=1)

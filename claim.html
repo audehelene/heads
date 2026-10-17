@@ -39,6 +39,15 @@
       <button class="btn" type="submit">SEND EMAIL</button>
       <p class="claim__note" id="note"></p>
     </form>
+
+    <!-- Fallbacks shown after submit (in case no default mail app opens) -->
+    <div class="claim__fallback" id="fallback" hidden>
+      <p class="claim__meta">Didn't open? Use one of these:</p>
+      <a class="btn btn--secondary" id="gmail-link" target="_blank" rel="noopener">OPEN IN GMAIL</a>
+      <a class="btn btn--secondary" id="mailto-link">EMAIL AUDEJOMINI@GMAIL.COM</a>
+      <button class="btn btn--secondary" type="button" id="copy-btn">COPY DETAILS</button>
+      <p class="claim__note" id="copy-note"></p>
+    </div>
   </main>
 
   <script>
@@ -58,6 +67,11 @@
 
       var form = document.getElementById('claim-form');
       var note = document.getElementById('note');
+      var fallback = document.getElementById('fallback');
+      var gmailLink = document.getElementById('gmail-link');
+      var mailtoLink = document.getElementById('mailto-link');
+      var copyBtn = document.getElementById('copy-btn');
+      var copyNote = document.getElementById('copy-note');
 
       form.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -81,13 +95,41 @@
           'Phone: ' + (phone || '(not provided)') + '\n\n' +
           'Claim link: ' + window.location.href + '\n';
 
-        window.location.href =
-          'mailto:' + RECIPIENT +
+        var mailto = 'mailto:' + RECIPIENT +
           '?subject=' + encodeURIComponent(subject) +
           '&body=' + encodeURIComponent(body);
+        var gmail = 'https://mail.google.com/mail/?view=cm&fs=1&to=' +
+          encodeURIComponent(RECIPIENT) +
+          '&su=' + encodeURIComponent(subject) +
+          '&body=' + encodeURIComponent(body);
 
-        note.textContent = 'Opening your email app… if nothing happens, email ' +
-          RECIPIENT + ' with your code above.';
+        // Try to open the default mail app (an anchor click is the most
+        // reliable way to hand off a mailto: to the OS handler).
+        var a = document.createElement('a');
+        a.href = mailto;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        // Always reveal fallbacks — on desktop without a default mail app the
+        // mailto may do nothing.
+        mailtoLink.href = mailto;
+        gmailLink.href = gmail;
+        fallback.hidden = false;
+        note.textContent = 'Opening your email app…';
+
+        copyBtn.onclick = function () {
+          var text = 'To: ' + RECIPIENT + '\nSubject: ' + subject + '\n\n' + body;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function () {
+              copyNote.textContent = 'Copied — paste it into an email to ' + RECIPIENT + '.';
+            }, function () {
+              copyNote.textContent = 'Copy failed — email ' + RECIPIENT + ' with your code above.';
+            });
+          } else {
+            copyNote.textContent = 'Email ' + RECIPIENT + ' with your code above.';
+          }
+        };
       });
     })();
   </script>
